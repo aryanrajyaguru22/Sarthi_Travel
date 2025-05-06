@@ -1,0 +1,86 @@
+Sarthi Bus management System 
+
+
+Technology: Any can Use 
+
+Requirements:
+
+	Pages:
+One Login Page 
+One Dashboard Page 
+One Add Bus Page 
+One Trip Page
+One Add Meal Page 
+One Ingredient Page 
+One User Profile Page 
+One Admin Panel 
+
+	Page Description:
+
+Login Page:
+
+	In that show text to Welcome Sarthi Travels.
+	Give option to sign up and Forget password.
+	Database Connection with this page.
+	Verify By Captcha
+
+Sign Up Page:
+	
+	In that need Full name email Id & Mobile Number.
+	Verify By Captcha.
+
+Forget Password:
+	
+	Verify By Captcha.
+	Using Email change Password.
+
+Dashboard Page:
+
+	It's a Home Page and show Calendar and which Trip was start in which Date.
+	In Trip Details Show.
+	In that show which Trip completed.
+	which Trip how much amount.
+	Which Trip Completed payment and which not
+	All Page add in Navigation Bar
+
+Add Bus Page:
+	
+	In that add bus and manage bus details.
+	Bus Details are bus no
+	All Page add in Navigation Bar
+
+Add Trip Page:
+	
+	In that page Select Source to destination.
+	Select Date and Bus
+	Select Km in that trip 
+	In trip give option to breakfast, Lunch and Dinner.
+	and added meal item ingredient show (ex. sugar: 2kg and etc.)
+	and option to change the meal items 
+	and final that ingredient list and generate pdf
+	In pdf of ingredient list all ingredient item show in and item not use but also mention in List.
+	All Page add in Navigation Bar
+
+Add Meal Item Page:
+
+	In that page was add meal Item name and which Ingredient need.
+	and All Meal Item listed in that page and show in Meal Page
+	in that page show all ingredient name and fill which ingredient need and how use
+	All Page add in Navigation Bar
+
+Ingredient Page:
+	
+	In that list all ingredient in any item need that listed in that page.
+	All Page add in Navigation Bar
+
+User Profile:
+
+	In that show user which trip created.
+	And Use Id and Information of user.
+	All Page add in Navigation Bar
+
+Admin Panel:
+	
+	That Manage bus, Trip, User and Meal items.
+	Admin view Payment status
+
