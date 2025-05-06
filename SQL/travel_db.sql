@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: May 06, 2025 at 09:12 AM
+-- Generation Time: May 06, 2025 at 10:12 AM
 -- Server version: 9.1.0
 -- PHP Version: 8.3.14
 
@@ -35,13 +35,6 @@ CREATE TABLE IF NOT EXISTS `buses` (
   UNIQUE KEY `bus_no` (`bus_no`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Dumping data for table `buses`
---
-
-INSERT INTO `buses` (`id`, `bus_no`) VALUES
-(2, 'GJ-18-Y-9972');
-
 -- --------------------------------------------------------
 
 --
@@ -53,16 +46,7 @@ CREATE TABLE IF NOT EXISTS `ingredients` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `ingredients`
---
-
-INSERT INTO `ingredients` (`id`, `name`) VALUES
-(3, 'Mithu'),
-(4, 'Rice'),
-(5, 'Coffee');
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -77,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `ingredient_units` (
   `unit` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `ingredient_id` (`ingredient_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `ingredient_units`
@@ -86,7 +70,14 @@ CREATE TABLE IF NOT EXISTS `ingredient_units` (
 INSERT INTO `ingredient_units` (`id`, `ingredient_id`, `unit`) VALUES
 (6, 4, 'Kg'),
 (5, 3, 'Kg'),
-(7, 5, 'Packet');
+(7, 5, 'Packet'),
+(8, 6, 'Kg'),
+(9, 6, 'Gram'),
+(10, 7, 'Kg'),
+(11, 7, 'Gram'),
+(12, 8, 'Litre'),
+(13, 9, 'Packet'),
+(14, 10, 'Piece');
 
 -- --------------------------------------------------------
 
@@ -100,19 +91,25 @@ CREATE TABLE IF NOT EXISTS `meal_ingredients` (
   `meal_id` int NOT NULL,
   `ingredient_id` int NOT NULL,
   `quantity` varchar(50) NOT NULL,
+  `unit` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `meal_id` (`meal_id`),
   KEY `ingredient_id` (`ingredient_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `meal_ingredients`
 --
 
-INSERT INTO `meal_ingredients` (`id`, `meal_id`, `ingredient_id`, `quantity`) VALUES
-(6, 4, 3, '5'),
-(5, 4, 4, '1'),
-(4, 3, 5, '20');
+INSERT INTO `meal_ingredients` (`id`, `meal_id`, `ingredient_id`, `quantity`, `unit`) VALUES
+(6, 4, 3, '5', NULL),
+(5, 4, 4, '1', NULL),
+(4, 3, 5, '20', NULL),
+(7, 5, 10, '20', NULL),
+(8, 5, 6, '10', NULL),
+(9, 5, 7, '2', NULL),
+(10, 6, 9, '80', NULL),
+(11, 6, 8, '5', NULL);
 
 -- --------------------------------------------------------
 
@@ -125,15 +122,7 @@ CREATE TABLE IF NOT EXISTS `meal_items` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `meal_items`
---
-
-INSERT INTO `meal_items` (`id`, `name`) VALUES
-(3, 'coffee'),
-(4, 'fried ride');
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -158,15 +147,7 @@ CREATE TABLE IF NOT EXISTS `trip_details` (
   `completed` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `bus_id` (`bus_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `trip_details`
---
-
-INSERT INTO `trip_details` (`id`, `source`, `destination`, `date`, `bus_id`, `km`, `meal_items`, `breakfast_meal_id`, `lunch_meal_id`, `dinner_meal_id`, `amount`, `payment_status`, `completed`) VALUES
-(1, 'Gandhinagar', 'Bhavnagar', '2025-05-06', 2, 280, NULL, 3, 4, 4, 0.00, 'completed', 1),
-(2, 'Gandhinagar', 'Bhavnagar', '2025-05-05', 2, 10, NULL, 3, 4, 3, 0.00, 'completed', 1);
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 

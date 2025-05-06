@@ -60,7 +60,7 @@ $meal_items = $conn->query("SELECT * FROM meal_items ORDER BY name ASC");
         <select name="bus_id" required>
             <option value="">Select Bus</option>
             <?php while ($bus = $buses->fetch_assoc()): ?>
-                <option value="<?= $bus['id'] ?>"><?= $bus['bus_no'] ?> (<?= $bus['bus_type'] ?>)</option>
+                <option value="<?= $bus['id'] ?>"><?= $bus['bus_no'] ?> </option>
             <?php endwhile; ?>
         </select><br><br>
 
