@@ -4,9 +4,43 @@ include 'db.php';
 include 'navbar.php';
 session_start();
 
-// Fetch all buses, meal items, and ingredients
+// Fetch all buses and meal items
 $buses = $conn->query("SELECT * FROM buses ORDER BY bus_no ASC");
 $meal_items = $conn->query("SELECT * FROM meal_items ORDER BY name ASC");
+
+// Handle POST submission
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $source = $_POST['source'];
+    $destination = $_POST['destination'];
+    $date = $_POST['date'];
+    $bus_id = $_POST['bus_id'];
+    $km = $_POST['km'];
+    $amount = $_POST['amount'];
+    $trip_day = $_POST['trip_day'];
+
+    $success = true;
+    $stmt = $conn->prepare("INSERT INTO trip_details (source, destination, date, bus_id, km, amount, trip_day, breakfast_meal_id, lunch_meal_id, dinner_meal_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+    for ($day = 1; $day <= $trip_day; $day++) {
+        $breakfast = $_POST["meal"]["breakfast"][$day] ?? null;
+        $lunch = $_POST["meal"]["lunch"][$day] ?? null;
+        $dinner = $_POST["meal"]["dinner"][$day] ?? null;
+
+        $stmt->bind_param("sssiiiii", $source, $destination, $date, $bus_id, $km, $amount, $trip_day, $breakfast, $lunch, $dinner);
+        if (!$stmt->execute()) {
+            $success = false;
+            break;
+        }
+    }
+
+    if ($success) {
+        echo "<script>alert('Trip created successfully'); window.location.href='trip_manage.php';</script>";
+    } else {
+        echo "<script>alert('Error creating trip');</script>";
+    }
+
+    $stmt->close();
+}
 ?>
 
 <!DOCTYPE html>
@@ -18,33 +52,27 @@ $meal_items = $conn->query("SELECT * FROM meal_items ORDER BY name ASC");
         select, input { margin-bottom: 10px; padding: 5px; width: 300px; }
         button { padding: 6px 12px; }
     </style>
+    <script>
+        function showMealSelectors() {
+            const container = document.getElementById("meal_selectors");
+            container.innerHTML = "";
+            const days = document.getElementById("trip_day").value;
+            for (let i = 1; i <= days; i++) {
+                container.innerHTML += `
+                    <h4>Day ${i}</h4>
+                    <label>Breakfast:</label><br>
+                    <select name="meal[breakfast][${i}]">${document.getElementById("meal_options").innerHTML}</select><br>
+                    <label>Lunch:</label><br>
+                    <select name="meal[lunch][${i}]">${document.getElementById("meal_options").innerHTML}</select><br>
+                    <label>Dinner:</label><br>
+                    <select name="meal[dinner][${i}]">${document.getElementById("meal_options").innerHTML}</select><br><br>
+                `;
+            }
+        }
+    </script>
 </head>
 <body>
     <h2>Create Trip</h2>
-
-    <?php
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $source = $_POST['source'];
-        $destination = $_POST['destination'];
-        $date = $_POST['date'];
-        $bus_id = $_POST['bus_id'];
-        $km = $_POST['km'];
-        $breakfast = $_POST['meal']['breakfast'];
-        $lunch = $_POST['meal']['lunch'];
-        $dinner = $_POST['meal']['dinner'];
-
-        $stmt = $conn->prepare("INSERT INTO trip_details (source, destination, date, bus_id, km, breakfast_meal_id, lunch_meal_id, dinner_meal_id)
-                                VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssiiiii", $source, $destination, $date, $bus_id, $km, $breakfast, $lunch, $dinner);
-
-        if ($stmt->execute()) {
-            echo "<script>alert('Trip created successfully'); window.location.href='trip_manage.php';</script>";
-        } else {
-            echo "<script>alert('Error creating trip');</script>";
-        }
-        $stmt->close();
-    }
-    ?>
 
     <form method="POST" action="">
         <label>Source:</label><br>
@@ -64,36 +92,26 @@ $meal_items = $conn->query("SELECT * FROM meal_items ORDER BY name ASC");
             <?php endwhile; ?>
         </select><br><br>
 
-        <label>Trip Distance (Km):</label><br>
+        <label>Distance (Km):</label><br>
         <input type="number" name="km" required><br><br>
 
-        <label>Breakfast:</label><br>
-        <select name="meal[breakfast]">
-            <option value="">Select Breakfast Meal</option>
-            <?php while ($meal = $meal_items->fetch_assoc()): ?>
-                <option value="<?= $meal['id'] ?>"><?= htmlspecialchars($meal['name']) ?></option>
-            <?php endwhile; ?>
-        </select><br><br>
+        <label>Amount (INR):</label><br>
+        <input type="number" name="amount" required><br><br>
 
-        <label>Lunch:</label><br>
-        <select name="meal[lunch]">
-            <option value="">Select Lunch Meal</option>
+        <label>Number of Days:</label><br>
+        <input type="number" name="trip_day" id="trip_day" required oninput="showMealSelectors()"><br><br>
+
+        <!-- Hidden meal options for JS to clone -->
+        <div id="meal_options" style="display:none;">
+            <option value="">Select Meal</option>
             <?php
-            $meal_items->data_seek(0); // Reset pointer
+            $meal_items->data_seek(0);
             while ($meal = $meal_items->fetch_assoc()): ?>
                 <option value="<?= $meal['id'] ?>"><?= htmlspecialchars($meal['name']) ?></option>
             <?php endwhile; ?>
-        </select><br><br>
+        </div>
 
-        <label>Dinner:</label><br>
-        <select name="meal[dinner]">
-            <option value="">Select Dinner Meal</option>
-            <?php
-            $meal_items->data_seek(0); // Reset pointer
-            while ($meal = $meal_items->fetch_assoc()): ?>
-                <option value="<?= $meal['id'] ?>"><?= htmlspecialchars($meal['name']) ?></option>
-            <?php endwhile; ?>
-        </select><br><br>
+        <div id="meal_selectors"></div>
 
         <button type="submit">Create Trip</button>
     </form>

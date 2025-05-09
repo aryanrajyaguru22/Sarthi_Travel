@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: May 06, 2025 at 10:12 AM
+-- Generation Time: May 09, 2025 at 09:07 AM
 -- Server version: 9.1.0
 -- PHP Version: 8.3.14
 
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `buses` (
   `bus_no` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `bus_no` (`bus_no`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `ingredients` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `ingredient_units` (
   `unit` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `ingredient_id` (`ingredient_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `ingredient_units`
@@ -77,7 +77,10 @@ INSERT INTO `ingredient_units` (`id`, `ingredient_id`, `unit`) VALUES
 (11, 7, 'Gram'),
 (12, 8, 'Litre'),
 (13, 9, 'Packet'),
-(14, 10, 'Piece');
+(14, 10, 'Piece'),
+(15, 11, 'Packet'),
+(16, 12, 'Kg'),
+(17, 13, 'Litre');
 
 -- --------------------------------------------------------
 
@@ -95,7 +98,7 @@ CREATE TABLE IF NOT EXISTS `meal_ingredients` (
   PRIMARY KEY (`id`),
   KEY `meal_id` (`meal_id`),
   KEY `ingredient_id` (`ingredient_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `meal_ingredients`
@@ -109,7 +112,10 @@ INSERT INTO `meal_ingredients` (`id`, `meal_id`, `ingredient_id`, `quantity`, `u
 (8, 5, 6, '10', NULL),
 (9, 5, 7, '2', NULL),
 (10, 6, 9, '80', NULL),
-(11, 6, 8, '5', NULL);
+(11, 6, 8, '5', NULL),
+(12, 7, 12, '10', NULL),
+(13, 8, 11, '20', NULL),
+(14, 8, 13, '4', NULL);
 
 -- --------------------------------------------------------
 
@@ -122,7 +128,7 @@ CREATE TABLE IF NOT EXISTS `meal_items` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -145,9 +151,10 @@ CREATE TABLE IF NOT EXISTS `trip_details` (
   `amount` decimal(10,2) DEFAULT '0.00',
   `payment_status` enum('pending','completed') DEFAULT 'pending',
   `completed` tinyint(1) DEFAULT '0',
+  `days` int NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `bus_id` (`bus_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
