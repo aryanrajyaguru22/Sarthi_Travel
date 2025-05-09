@@ -16,24 +16,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $bus_id = $_POST['bus_id'];
     $km = $_POST['km'];
     $amount = $_POST['amount'];
-    $trip_day = $_POST['trip_day'];
+    $days = $_POST['trip_day'];
 
-    $success = true;
-    $stmt = $conn->prepare("INSERT INTO trip_details (source, destination, date, bus_id, km, amount, trip_day, breakfast_meal_id, lunch_meal_id, dinner_meal_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-    for ($day = 1; $day <= $trip_day; $day++) {
-        $breakfast = $_POST["meal"]["breakfast"][$day] ?? null;
-        $lunch = $_POST["meal"]["lunch"][$day] ?? null;
-        $dinner = $_POST["meal"]["dinner"][$day] ?? null;
-
-        $stmt->bind_param("sssiiiii", $source, $destination, $date, $bus_id, $km, $amount, $trip_day, $breakfast, $lunch, $dinner);
-        if (!$stmt->execute()) {
-            $success = false;
-            break;
-        }
+    $mealData = [];
+    for ($day = 1; $day <= $days; $day++) {
+        $mealData["day_$day"] = [
+            "breakfast" => $_POST["meal"]["breakfast"][$day] ?? null,
+            "lunch" => $_POST["meal"]["lunch"][$day] ?? null,
+            "dinner" => $_POST["meal"]["dinner"][$day] ?? null,
+        ];
     }
 
-    if ($success) {
+    // Optional: Store day 1 meals in dedicated columns
+    $breakfast_meal_id = $_POST["meal"]["breakfast"][1] ?? null;
+    $lunch_meal_id = $_POST["meal"]["lunch"][1] ?? null;
+    $dinner_meal_id = $_POST["meal"]["dinner"][1] ?? null;
+
+    $meal_json = json_encode($mealData);
+
+    $stmt = $conn->prepare("INSERT INTO trip_details 
+        (source, destination, date, bus_id, km, meal_items, breakfast_meal_id, lunch_meal_id, dinner_meal_id, amount, days)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+    $stmt->bind_param("sssissiiiid", $source, $destination, $date, $bus_id, $km, $meal_json, $breakfast_meal_id, $lunch_meal_id, $dinner_meal_id, $amount, $days);
+
+    if ($stmt->execute()) {
         echo "<script>alert('Trip created successfully'); window.location.href='trip_manage.php';</script>";
     } else {
         echo "<script>alert('Error creating trip');</script>";
@@ -88,7 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <select name="bus_id" required>
             <option value="">Select Bus</option>
             <?php while ($bus = $buses->fetch_assoc()): ?>
-                <option value="<?= $bus['id'] ?>"><?= $bus['bus_no'] ?> </option>
+                <option value="<?= $bus['id'] ?>"><?= $bus['bus_no'] ?></option>
             <?php endwhile; ?>
         </select><br><br>
 
@@ -96,7 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="number" name="km" required><br><br>
 
         <label>Amount (INR):</label><br>
-        <input type="number" name="amount" required><br><br>
+        <input type="number" name="amount" step="0.01" required><br><br>
 
         <label>Number of Days:</label><br>
         <input type="number" name="trip_day" id="trip_day" required oninput="showMealSelectors()"><br><br>

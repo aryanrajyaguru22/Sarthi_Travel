@@ -9,12 +9,17 @@ if (!$id) {
     exit;
 }
 
-// Get the first record to fetch main trip info
+// Fetch the trip
 $trip = $conn->query("SELECT * FROM trip_details WHERE id = $id")->fetch_assoc();
-$trip_group_id = $trip['group_id'] ?? $trip['id']; // assume group_id or fallback to id
-$trip_days = $conn->query("SELECT * FROM trip_details WHERE group_id = $trip_group_id ORDER BY id ASC");
+if (!$trip) {
+    echo "<script>alert('Trip not found'); window.location.href='trip_manage.php';</script>";
+    exit;
+}
 
-// Buses and meals
+// Decode meal JSON
+$meal_items_data = json_decode($trip['meal_items'], true) ?? [];
+
+// Fetch buses and meal items
 $buses = $conn->query("SELECT * FROM buses ORDER BY bus_no ASC");
 $meal_items = $conn->query("SELECT * FROM meal_items ORDER BY name ASC");
 
@@ -25,23 +30,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $bus_id = $_POST['bus_id'];
     $km = $_POST['km'];
     $amount = $_POST['amount'];
-    $trip_day = $_POST['trip_day'];
+    $days = $_POST['trip_day'];
 
-    // First delete existing trip day entries for that group
-    $conn->query("DELETE FROM trip_details WHERE group_id = $trip_group_id");
-
-    $stmt = $conn->prepare("INSERT INTO trip_details (source, destination, date, bus_id, km, amount, trip_day, breakfast_meal_id, lunch_meal_id, dinner_meal_id, group_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-    for ($day = 1; $day <= $trip_day; $day++) {
-        $breakfast = $_POST['meal']['breakfast'][$day] ?? null;
-        $lunch = $_POST['meal']['lunch'][$day] ?? null;
-        $dinner = $_POST['meal']['dinner'][$day] ?? null;
-        $stmt->bind_param("sssiiiiiiii", $source, $destination, $date, $bus_id, $km, $amount, $trip_day, $breakfast, $lunch, $dinner, $trip_group_id);
-        $stmt->execute();
+    $mealData = [];
+    for ($day = 1; $day <= $days; $day++) {
+        $mealData["day_$day"] = [
+            "breakfast" => $_POST["meal"]["breakfast"][$day] ?? null,
+            "lunch" => $_POST["meal"]["lunch"][$day] ?? null,
+            "dinner" => $_POST["meal"]["dinner"][$day] ?? null,
+        ];
     }
 
-    echo "<script>alert('Trip updated successfully'); window.location.href='trip_manage.php';</script>";
-    exit;
+    // Optional: Store day 1 meals in dedicated columns
+    $breakfast_meal_id = $_POST["meal"]["breakfast"][1] ?? null;
+    $lunch_meal_id = $_POST["meal"]["lunch"][1] ?? null;
+    $dinner_meal_id = $_POST["meal"]["dinner"][1] ?? null;
+
+    $meal_json = json_encode($mealData);
+
+    $stmt = $conn->prepare("UPDATE trip_details SET 
+        source = ?, destination = ?, date = ?, bus_id = ?, km = ?, meal_items = ?, 
+        breakfast_meal_id = ?, lunch_meal_id = ?, dinner_meal_id = ?, amount = ?, days = ?
+        WHERE id = ?");
+
+    $stmt->bind_param("sssissiiidii", $source, $destination, $date, $bus_id, $km, $meal_json,
+        $breakfast_meal_id, $lunch_meal_id, $dinner_meal_id, $amount, $days, $id);
+
+    if ($stmt->execute()) {
+        echo "<script>alert('Trip updated successfully'); window.location.href='trip_manage.php';</script>";
+    } else {
+        echo "<script>alert('Error updating trip');</script>";
+    }
+
+    $stmt->close();
 }
 ?>
 
@@ -57,35 +78,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script>
         function showMealSelectors() {
             const container = document.getElementById("meal_selectors");
-            const days = document.getElementById("trip_day").value;
-            const mealOptions = document.getElementById("meal_options").innerHTML;
             container.innerHTML = "";
-
+            const days = document.getElementById("trip_day").value;
             for (let i = 1; i <= days; i++) {
                 container.innerHTML += `
                     <h4>Day ${i}</h4>
                     <label>Breakfast:</label><br>
-                    <select name="meal[breakfast][${i}]">${mealOptions}</select><br>
+                    <select name="meal[breakfast][${i}]">${document.getElementById("meal_options").innerHTML}</select><br>
                     <label>Lunch:</label><br>
-                    <select name="meal[lunch][${i}]">${mealOptions}</select><br>
+                    <select name="meal[lunch][${i}]">${document.getElementById("meal_options").innerHTML}</select><br>
                     <label>Dinner:</label><br>
-                    <select name="meal[dinner][${i}]">${mealOptions}</select><br><br>
+                    <select name="meal[dinner][${i}]">${document.getElementById("meal_options").innerHTML}</select><br><br>
                 `;
             }
-        }
 
-        function setDefaultMeals(tripData) {
-            const days = Object.keys(tripData).length;
-            document.getElementById("trip_day").value = days;
-            showMealSelectors();
-
-            for (let i = 1; i <= days; i++) {
-                if (tripData[i]) {
-                    document.querySelector(`[name="meal[breakfast][${i}]"]`).value = tripData[i].breakfast;
-                    document.querySelector(`[name="meal[lunch][${i}]"]`).value = tripData[i].lunch;
-                    document.querySelector(`[name="meal[dinner][${i}]"]`).value = tripData[i].dinner;
+            setTimeout(() => {
+                const meals = <?= json_encode($meal_items_data) ?>;
+                for (let day in meals) {
+                    const dayNum = parseInt(day.replace("day_", ""));
+                    if (meals[day]) {
+                        document.querySelector(`[name="meal[breakfast][${dayNum}]"]`).value = meals[day].breakfast;
+                        document.querySelector(`[name="meal[lunch][${dayNum}]"]`).value = meals[day].lunch;
+                        document.querySelector(`[name="meal[dinner][${dayNum}]"]`).value = meals[day].dinner;
+                    }
                 }
-            }
+            }, 100);
         }
     </script>
 </head>
@@ -104,22 +121,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <label>Bus:</label><br>
         <select name="bus_id" required>
+            <option value="">Select Bus</option>
             <?php while ($bus = $buses->fetch_assoc()): ?>
                 <option value="<?= $bus['id'] ?>" <?= $trip['bus_id'] == $bus['id'] ? 'selected' : '' ?>>
-                    <?= $bus['bus_no'] ?> (<?= $bus['bus_type'] ?>)
+                    <?= $bus['bus_no'] ?>
                 </option>
             <?php endwhile; ?>
         </select><br><br>
 
-        <label>Trip Distance (Km):</label><br>
+        <label>Distance (Km):</label><br>
         <input type="number" name="km" value="<?= $trip['km'] ?>" required><br><br>
 
         <label>Amount (INR):</label><br>
-        <input type="number" name="amount" value="<?= $trip['amount'] ?>" required><br><br>
+        <input type="number" name="amount" step="0.01" value="<?= $trip['amount'] ?>" required><br><br>
 
         <label>Number of Days:</label><br>
-        <input type="number" name="trip_day" id="trip_day" value="<?= $trip['trip_day'] ?>" required oninput="showMealSelectors()"><br><br>
+        <input type="number" name="trip_day" id="trip_day" value="<?= $trip['days'] ?>" required oninput="showMealSelectors()"><br><br>
 
+        <!-- Hidden meal options for JS -->
         <div id="meal_options" style="display:none;">
             <option value="">Select Meal</option>
             <?php
@@ -135,17 +154,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <button type="submit">Update Trip</button>
     </form>
 
-    <script>
-        const tripData = {
-            <?php
-            $i = 1;
-            while ($day = $trip_days->fetch_assoc()):
-                echo "$i: { breakfast: '{$day['breakfast_meal_id']}', lunch: '{$day['lunch_meal_id']}', dinner: '{$day['dinner_meal_id']}' },";
-                $i++;
-            endwhile;
-            ?>
-        };
-        window.onload = () => setDefaultMeals(tripData);
-    </script>
+    <script> window.onload = showMealSelectors; </script>
 </body>
 </html>
