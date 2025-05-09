@@ -1,4 +1,4 @@
-<?php
+<?php 
 include 'db.php';
 include 'navbar.php';
 session_start();
@@ -41,13 +41,83 @@ $trips = $conn->query("
     <meta charset="UTF-8">
     <title>Trip Management</title>
     <style>
-        body { font-family: Arial; margin: 20px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid #ddd; padding: 8px; }
-        button { padding: 6px 12px; margin-top: 5px; }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        h2 {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #2c3e50;
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            transition: background-color 0.3s;
+        }
+        th {
+            background-color: #2c3e50;
+            color: white;
+        }
+        tr:hover td {
+            background-color: #ecf0f1;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        select {
+            padding: 6px;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .actions a {
+            color: #e74c3c;
+            text-decoration: none;
+        }
+        .actions a:hover {
+            text-decoration: underline;
+        }
+        .export-btn {
+            padding: 6px 12px;
+            background-color: #16a085;
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .export-btn:hover {
+            background-color: #1abc9c;
+        }
     </style>
 </head>
 <body>
+
     <h2>Manage Trips</h2>
     <table>
         <thead>
@@ -67,7 +137,7 @@ $trips = $conn->query("
         </thead>
         <tbody>
         <?php while ($trip = $trips->fetch_assoc()): ?>
-            <tr>
+            <tr class="trip-row">
                 <td><?= htmlspecialchars($trip['source']) ?></td>
                 <td><?= htmlspecialchars($trip['destination']) ?></td>
                 <td><?= $trip['date'] ?></td>
@@ -94,10 +164,10 @@ $trips = $conn->query("
                         </select>
                     </form>
                 </td>
-                <td>
+                <td class="actions">
                     <a href="edit_trip.php?id=<?= $trip['id'] ?>">Edit</a> |
                     <a href="delete_trip.php?id=<?= $trip['id'] ?>" onclick="return confirm('Are you sure?')">Delete</a><br>
-                    <button onclick='downloadTripPDF(<?= json_encode($trip, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_APOS) ?>)'>Export PDF</button>
+                    <button class="export-btn" onclick='downloadTripPDF(<?= json_encode($trip, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_APOS) ?>)'>Export PDF</button>
                 </td>
             </tr>
         <?php endwhile; ?>

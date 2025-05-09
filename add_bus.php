@@ -1,5 +1,3 @@
-<!-- add_bus.php -->
-
 <?php
 include 'db.php';
 include 'navbar.php';
@@ -30,17 +28,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Add Bus - Sarthi Travels</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body>
-    <h2>Add New Bus</h2>
-    <form method="POST" onsubmit="return validateBusNo()">
-        <label>Bus Number (Format: GJ-18-A-0001):</label><br>
-        <input type="text" name="bus_no" id="bus_no" required><br><br>
-        <button type="submit">Add Bus</button>
-    </form>
+<body class="bg-gray-100 text-gray-800 font-sans">
+
+    <div class="max-w-4xl mx-auto py-10 px-6">
+        <h2 class="text-3xl font-bold mb-6 text-center text-indigo-600 animate-pulse">🚌 Add New Bus</h2>
+
+        <form method="POST" onsubmit="return validateBusNo()" class="bg-white shadow-md rounded-lg p-6 mb-10">
+            <label class="block text-lg font-semibold mb-2">Bus Number 
+                <span class="text-sm text-gray-500">(Format: GJ-18-A-0001)</span>
+            </label>
+            <input 
+                type="text" 
+                name="bus_no" 
+                id="bus_no" 
+                oninput="this.value = this.value.toUpperCase()"
+                required 
+                class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+                placeholder="Enter bus number"
+            >
+            <button 
+                type="submit" 
+                class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300"
+            >
+                ➕ Add Bus
+            </button>
+        </form>
+
+        <h3 class="text-2xl font-semibold mb-4">🗂️ All Buses</h3>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white shadow-md rounded-lg">
+                <thead class="bg-indigo-600 text-white">
+                    <tr>
+                        <th class="py-3 px-4 text-left">ID</th>
+                        <th class="py-3 px-4 text-left">Bus No</th>
+                        <th class="py-3 px-4 text-left">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $result = $conn->query("SELECT * FROM buses ORDER BY id DESC");
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<tr class='border-b hover:bg-gray-100 transition'>
+                                <td class='py-2 px-4'>{$row['id']}</td>
+                                <td class='py-2 px-4 font-mono'>{$row['bus_no']}</td>
+                                <td class='py-2 px-4'>
+                                    <a href='edit_bus.php?id={$row['id']}' class='text-blue-600 hover:underline'>Edit</a> | 
+                                    <a href='delete_bus.php?id={$row['id']}' class='text-red-600 hover:underline' onclick='return confirm(\"Are you sure?\")'>Delete</a>
+                                </td>
+                              </tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     <script>
         function validateBusNo() {
@@ -48,30 +96,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             const pattern = /^[A-Z]{2}-\d{2}-[A-Z]{1}-\d{4}$/;
 
             if (!pattern.test(busNo)) {
-                alert("Invalid Bus Number Format. Use GJ-18-A-0001");
+                alert("❌ Invalid Bus Number Format. Use GJ-18-A-0001");
                 return false;
             }
             return true;
         }
     </script>
-
-    <br><br>
-    <h3>All Buses</h3>
-    <table border="1" cellpadding="10">
-        <tr><th>ID</th><th>Bus No</th><th>Action</th></tr>
-        <?php
-        $result = $conn->query("SELECT * FROM buses ORDER BY id DESC");
-        while ($row = $result->fetch_assoc()) {
-            echo "<tr>
-                    <td>{$row['id']}</td>
-                    <td>{$row['bus_no']}</td>
-                    <td>
-                        <a href='edit_bus.php?id={$row['id']}'>Edit</a> | 
-                        <a href='delete_bus.php?id={$row['id']}' onclick='return confirm(\"Are you sure?\")'>Delete</a>
-                    </td>
-                </tr>";
-        }
-        ?>
-    </table>
 </body>
 </html>

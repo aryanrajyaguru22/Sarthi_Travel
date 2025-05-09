@@ -1,4 +1,4 @@
-<?php
+<?php  
 include 'db.php';
 include 'navbar.php';
 session_start();
@@ -26,11 +26,18 @@ while ($trip = $trips_result->fetch_assoc()) {
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.2.0/dist/fullcalendar.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        #calendar { max-width: 900px; margin: 0 auto; }
-        .trip-details { margin-top: 30px; }
+        body { font-family: 'Arial', sans-serif; margin: 20px; background-color: #f4f4f4; }
+        h2, h3 { text-align: center; color: #333; }
+        #calendar { max-width: 900px; margin: 20px auto; background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+        .trip-details { margin-top: 30px; background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
         table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 8px; border: 1px solid #ccc; text-align: left; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; font-size: 14px; }
+        th { background-color: #4CAF50; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        tr:hover { background-color: #ddd; cursor: pointer; }
+        td, th { transition: background-color 0.3s ease, color 0.3s ease; }
+        td:hover { background-color: #f1f1f1; }
+        .no-trips { text-align: center; color: #999; }
     </style>
 </head>
 <body>
@@ -67,7 +74,7 @@ while ($trip = $trips_result->fetch_assoc()) {
                     <td>₹<?= $trip['amount'] ?></td>
                 </tr>
             <?php endwhile; else: ?>
-                <tr><td colspan="3">No upcoming trips found.</td></tr>
+                <tr><td colspan="3" class="no-trips">No upcoming trips found.</td></tr>
             <?php endif; ?>
         </tbody>
     </table>
@@ -80,10 +87,17 @@ while ($trip = $trips_result->fetch_assoc()) {
             events: <?= json_encode($calendar_events); ?>,
             eventRender: function (event, element) {
                 element.attr('title', event.description);
+                // Add smooth fade-in effect on event render
+                element.hide().fadeIn(1000);
             },
             eventClick: function (event) {
                 alert('Trip: ' + event.title + '\nDate: ' + event.start.format('YYYY-MM-DD') + '\n' + event.description);
             }
+        });
+
+        // Add smooth animation to the upcoming trips table
+        $('table tbody tr').each(function(index) {
+            $(this).delay(index * 300).fadeIn(1000);
         });
     });
 </script>

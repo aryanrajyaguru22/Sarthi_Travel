@@ -1,5 +1,3 @@
-<!-- edit_bus.php -->
-
 <?php
 include 'db.php';
 session_start();
@@ -40,34 +38,110 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Bus - Sarthi Travels</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+        h2 {
+            text-align: center;
+            color: #4CAF50;
+            margin-top: 20px;
+        }
+        .form-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 20px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+            color: #333;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #4CAF50;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .alert {
+            text-align: center;
+            color: #e74c3c;
+            font-size: 14px;
+        }
+        .form-container p {
+            text-align: center;
+            color: #999;
+        }
+    </style>
 </head>
 <body>
-    <h2>Edit Bus Number</h2>
+
+<h2>Edit Bus Number</h2>
+<div class="form-container">
     <form method="POST" onsubmit="return validateBusNo()">
-        <label>Bus Number (Format: GJ-18-A-0001):</label><br>
-        <input type="text" name="bus_no" id="bus_no" value="<?= htmlspecialchars($bus['bus_no']) ?>" required><br><br>
+        <label for="bus_no">Bus Number (Format: GJ-18-A-0001):</label>
+        <input type="text" name="bus_no" id="bus_no" value="<?= htmlspecialchars($bus['bus_no']) ?>" required>
         <button type="submit">Update Bus</button>
+        <p id="error-message" class="alert"></p>
     </form>
+</div>
 
-    <script>
-        const input = document.getElementById("bus_no");
-        input.addEventListener("input", function() {
-            this.value = this.value.toUpperCase();
-        });
+<script>
+    const input = document.getElementById("bus_no");
+    const errorMessage = document.getElementById("error-message");
 
-        function validateBusNo() {
-            const pattern = /^[A-Z]{2}-\d{2}-[A-Z]{1}-\d{4}$/;
-            const value = input.value.trim();
+    // Convert input to uppercase in real-time
+    input.addEventListener("input", function() {
+        this.value = this.value.toUpperCase();
+        errorMessage.textContent = ''; // Clear previous error message
+    });
 
-            if (!pattern.test(value)) {
-                alert("Invalid Bus Number Format. Use GJ-18-A-0001");
-                return false;
-            }
-            return true;
+    function validateBusNo() {
+        const pattern = /^[A-Z]{2}-\d{2}-[A-Z]{1}-\d{4}$/;
+        const value = input.value.trim();
+
+        if (!pattern.test(value)) {
+            errorMessage.textContent = "Invalid Bus Number Format. Use GJ-18-A-0001";
+            return false;
         }
-    </script>
+
+        return true;
+    }
+</script>
+
 </body>
 </html>

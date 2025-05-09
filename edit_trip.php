@@ -1,4 +1,4 @@
-<?php
+<?php 
 include 'db.php';
 include 'navbar.php';
 session_start();
@@ -50,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $stmt = $conn->prepare("UPDATE trip_details SET 
         source = ?, destination = ?, date = ?, bus_id = ?, km = ?, meal_items = ?, 
-        breakfast_meal_id = ?, lunch_meal_id = ?, dinner_meal_id = ?, amount = ?, days = ?
+        breakfast_meal_id = ?, lunch_meal_id = ?, dinner_meal_id = ?, amount = ?, days = ? 
         WHERE id = ?");
 
     $stmt->bind_param("sssissiiidii", $source, $destination, $date, $bus_id, $km, $meal_json,
@@ -71,9 +71,79 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <title>Edit Trip</title>
     <style>
-        body { font-family: Arial; margin: 20px; }
-        select, input { margin-bottom: 10px; padding: 5px; width: 300px; }
-        button { padding: 6px 12px; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        h2 {
+            text-align: center;
+            color: #4CAF50;
+            margin-top: 20px;
+        }
+        .form-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 30px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+            color: #333;
+        }
+        input[type="text"], input[type="date"], input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus, select:focus {
+            border-color: #4CAF50;
+        }
+        #meal_selectors {
+            margin-top: 20px;
+        }
+        .meal-row {
+            margin-bottom: 15px;
+        }
+        .meal-row label {
+            font-size: 14px;
+            color: #555;
+        }
+        .meal-row select {
+            width: 100%;
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        button {
+            padding: 12px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .meal-selector {
+            display: none;
+        }
     </style>
     <script>
         function showMealSelectors() {
@@ -82,13 +152,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             const days = document.getElementById("trip_day").value;
             for (let i = 1; i <= days; i++) {
                 container.innerHTML += `
-                    <h4>Day ${i}</h4>
-                    <label>Breakfast:</label><br>
-                    <select name="meal[breakfast][${i}]">${document.getElementById("meal_options").innerHTML}</select><br>
-                    <label>Lunch:</label><br>
-                    <select name="meal[lunch][${i}]">${document.getElementById("meal_options").innerHTML}</select><br>
-                    <label>Dinner:</label><br>
-                    <select name="meal[dinner][${i}]">${document.getElementById("meal_options").innerHTML}</select><br><br>
+                    <div class="meal-row">
+                        <h4>Day ${i}</h4>
+                        <label>Breakfast:</label>
+                        <select name="meal[breakfast][${i}]">${document.getElementById("meal_options").innerHTML}</select><br>
+                        <label>Lunch:</label>
+                        <select name="meal[lunch][${i}]">${document.getElementById("meal_options").innerHTML}</select><br>
+                        <label>Dinner:</label>
+                        <select name="meal[dinner][${i}]">${document.getElementById("meal_options").innerHTML}</select>
+                    </div>
                 `;
             }
 
@@ -107,19 +179,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </script>
 </head>
 <body>
+
+<div class="form-container">
     <h2>Edit Trip</h2>
 
     <form method="POST">
-        <label>Source:</label><br>
-        <input type="text" name="source" value="<?= $trip['source'] ?>" required><br><br>
+        <label>Source:</label>
+        <input type="text" name="source" value="<?= $trip['source'] ?>" required>
 
-        <label>Destination:</label><br>
-        <input type="text" name="destination" value="<?= $trip['destination'] ?>" required><br><br>
+        <label>Destination:</label>
+        <input type="text" name="destination" value="<?= $trip['destination'] ?>" required>
 
-        <label>Date:</label><br>
-        <input type="date" name="date" value="<?= $trip['date'] ?>" required><br><br>
+        <label>Date:</label>
+        <input type="date" name="date" value="<?= $trip['date'] ?>" required>
 
-        <label>Bus:</label><br>
+        <label>Bus:</label>
         <select name="bus_id" required>
             <option value="">Select Bus</option>
             <?php while ($bus = $buses->fetch_assoc()): ?>
@@ -127,19 +201,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <?= $bus['bus_no'] ?>
                 </option>
             <?php endwhile; ?>
-        </select><br><br>
+        </select>
 
-        <label>Distance (Km):</label><br>
-        <input type="number" name="km" value="<?= $trip['km'] ?>" required><br><br>
+        <label>Distance (Km):</label>
+        <input type="number" name="km" value="<?= $trip['km'] ?>" required>
 
-        <label>Amount (INR):</label><br>
-        <input type="number" name="amount" step="0.01" value="<?= $trip['amount'] ?>" required><br><br>
+        <label>Amount (INR):</label>
+        <input type="number" name="amount" value="<?= $trip['amount'] ?>" required step="0.01">
 
-        <label>Number of Days:</label><br>
-        <input type="number" name="trip_day" id="trip_day" value="<?= $trip['days'] ?>" required oninput="showMealSelectors()"><br><br>
+        <label>Number of Days:</label>
+        <input type="number" name="trip_day" id="trip_day" value="<?= $trip['days'] ?>" required oninput="showMealSelectors()">
 
-        <!-- Hidden meal options for JS -->
-        <div id="meal_options" style="display:none;">
+        <div id="meal_options" class="meal-selector">
             <option value="">Select Meal</option>
             <?php
             $meal_items->data_seek(0);
@@ -153,7 +226,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <button type="submit">Update Trip</button>
     </form>
+</div>
 
-    <script> window.onload = showMealSelectors; </script>
+<script>
+    window.onload = showMealSelectors;
+</script>
+
 </body>
 </html>

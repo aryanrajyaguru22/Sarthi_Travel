@@ -1,0 +1,18 @@
+Work Done Requirements:
+
+Login Page:
+
+	In that show text to Welcome Sarthi Travels.
+	Give option to sign up and Forget password.
+	Database Connection with this page.
+	Verify By Captcha
+
+Sign Up Page:
+	
+	In that need Full name email Id & Mobile Number.
+	Verify By Captcha.
+
+Forget Password:
+	
+	Verify By Captcha.
+	Using Email change Password.
