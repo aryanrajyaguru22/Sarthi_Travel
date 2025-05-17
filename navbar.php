@@ -89,7 +89,6 @@
         <a href="trip_manage.php">Trip Manage</a>
         <a href="meal_items.php">Manage Meal</a>
         <a href="ingredients.php">Ingredients</a>
-        <a href="profile.php">Profile</a> <!-- Link to Profile Page -->
     </div>
 
     <div class="nav-right">
