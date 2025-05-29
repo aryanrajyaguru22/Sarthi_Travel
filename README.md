@@ -45,5 +45,5 @@ Thanks to open-source libraries like **FPDF** and all who inspired this project.
 
 ---
 
-**Made with 💻 by Aryan Rajyaguru**
+
 
