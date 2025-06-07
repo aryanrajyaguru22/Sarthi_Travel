@@ -20,7 +20,7 @@ while ($trip = $trips_result->fetch_assoc()) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
+    <title>ડેશબોર્ડ</title>
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@3.2.0/dist/fullcalendar.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
@@ -42,20 +42,20 @@ while ($trip = $trips_result->fetch_assoc()) {
 </head>
 <body>
 
-<h2>Dashboard</h2>
+<h2>ડેશબોર્ડ</h2>
 
 <!-- Calendar Section -->
 <div id="calendar"></div>
 
 <!-- Upcoming Trip Details Section -->
 <div class="trip-details">
-    <h3>Upcoming Trips (Next 7 Days)</h3>
+    <h3>આવનારી ટ્રિપ (આવતા ૭ દિવસ)</h3>
     <table>
         <thead>
             <tr>
-                <th>Trip</th>
-                <th>Date</th>
-                <th>Amount</th>
+                <th>ટ્રિપ</th>
+                <th>તારીખ</th>
+                <th>રકમ</th>
             </tr>
         </thead>
         <tbody>

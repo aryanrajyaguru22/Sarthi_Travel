@@ -73,7 +73,7 @@
 
 <nav>
     <div style="font-size: 1.5rem; font-weight: bold;">
-        🚍 Sarthi Travels
+        🚍 સારથી ટ્રાવેલ્સ
     </div>
 
     <div class="menu-toggle" onclick="toggleMenu()">
@@ -83,12 +83,12 @@
     </div>
 
     <div class="nav-left" id="navLinks">
-        <a href="dashboard.php">Dashboard</a>
-        <a href="add_bus.php">Bus Manage</a>
-        <a href="trip.php">Add Trip</a>
-        <a href="trip_manage.php">Trip Manage</a>
-        <a href="meal_items.php">Manage Meal</a>
-        <a href="ingredients.php">Ingredients</a>
+        <a href="dashboard.php">ડેશબોર્ડ</a>
+        <a href="add_bus.php">બસ મેનેજ</a>
+        <a href="trip.php">ટ્રિપ ઉમેરો</a>
+        <a href="trip_manage.php">ટ્રિપ મેનેજ</a>
+        <a href="meal_items.php">ભોજનનું સંચાલન</a>
+        <a href="ingredients.php">વસ્તુ સામગ્રી</a>
     </div>
 
     <div class="nav-right">

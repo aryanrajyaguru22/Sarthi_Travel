@@ -132,24 +132,24 @@
 <body>
 
 <div class="form-container">
-    <h2>Welcome to Sarthi Travels</h2>
+    <h2>સ્વાગત છે તમારું સારથી ટ્રાવેલ્સ </h2>
     <form method="POST" action="login_action.php">
-        <label>Email:</label><br>
-        <input type="email" name="email" required><br><br>
+        <label>ઇમેઇલ:</label><br>
+        <input type="email" name="email" required placeholder="તમારું ઇમેઇલ અહીંયા લખો"><br><br>
 
-        <label>Password:</label><br>
-        <input type="password" name="password" required><br><br>
+        <label>પાસવર્ડ:</label><br>
+        <input type="password" name="password" required placeholder="તમારું પાસવર્ડ અહીંયા લખો"><br><br>
 
         <label>Captcha:</label><br>
         <span id="captchaDisplay"></span>
-        <button type="button" class="reload-btn" onclick="reloadCaptcha()">Reload</button><br><br>
+        <button type="button" class="reload-btn" onclick="reloadCaptcha()">ફરી જાણો કોડે </button><br><br>
 
-        <input type="text" name="captcha_input" required placeholder="Enter above code"><br><br>
+        <input type="text" name="captcha_input" required placeholder="ઉપર આપે લો કોડે અહીંયા લખો"><br><br>
 
         <button type="submit">Login</button><br><br>
 
         <div class="form-links">
-            <a href="signup.php">Sign Up</a> | <a href="forgot_password.php">Forgot Password</a>
+            <a href="signup.php">નવું એકાઉન્ટ બનાવો </a> | <a href="forgot_password.php">ફરી જાણો પાસવર્ડ</a>
         </div>
     </form>
 </div>

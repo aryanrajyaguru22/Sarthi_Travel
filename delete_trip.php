@@ -15,8 +15,8 @@ $stmt = $conn->prepare("DELETE FROM trip_details WHERE id = ?");
 $stmt->bind_param("i", $id);
 
 if ($stmt->execute()) {
-    echo "<script>alert('Trip deleted successfully'); window.location.href='trip_manage.php';</script>";
+    echo "<script>alert('ટ્રિપ સફળતાપૂર્વક નીકળી ગઈ છે'); window.location.href='trip_manage.php';</script>";
 } else {
-    echo "<script>alert('Failed to delete trip'); window.location.href='trip_manage.php';</script>";
+    echo "<script>alert('ટ્રિપ ડિલીટ કરવામાં નિષ્ફળ થયાં'); window.location.href='trip_manage.php';</script>";
 }
 $stmt->close();

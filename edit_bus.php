@@ -12,7 +12,7 @@ $id = intval($_GET['id']);
 // Fetch existing data
 $bus = $conn->query("SELECT * FROM buses WHERE id=$id")->fetch_assoc();
 if (!$bus) {
-    echo "<script>alert('Bus not found.'); window.location='add_bus.php';</script>";
+    echo "<script>alert('એ નંબર ની બસ નથી લિસ્ટ માં '); window.location='add_bus.php';</script>";
     exit();
 }
 
@@ -22,15 +22,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pattern = "/^[A-Z]{2}-\d{2}-[A-Z]{1}-\d{4}$/";
 
     if (!preg_match($pattern, $new_no)) {
-        echo "<script>alert('Invalid Bus Number Format. Use GJ-18-A-0001');</script>";
+        echo "<script>alert('બસ નંબર ફરીવાર નાખો જે રીતે કીધું છે. એ રીતે નાખો  GJ-18-A-0001');</script>";
     } else {
         // Check for duplicates (excluding current)
         $check = $conn->query("SELECT * FROM buses WHERE bus_no = '$new_no' AND id != $id");
         if ($check->num_rows > 0) {
-            echo "<script>alert('Bus number already exists.');</script>";
+            echo "<script>alert('એ બસ પેહેલે થી જ ઉમેરાઈ ગઈ છે ');</script>";
         } else {
             $conn->query("UPDATE buses SET bus_no='$new_no' WHERE id=$id");
-            echo "<script>alert('Bus updated successfully.'); window.location='add_bus.php';</script>";
+            echo "<script>alert('બસ ની માહિતી માં ફેરફાર થઇ ગયો છે '); window.location='add_bus.php';</script>";
             exit();
         }
     }
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Bus - Sarthi Travels</title>
+    <title>ફેરફાર કરો બસમાં - સારથી ટ્રાવેલ્સ</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -110,12 +110,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 
-<h2>Edit Bus Number</h2>
+<h2>બસ નંબર ફેરફાર કરો</h2>
 <div class="form-container">
     <form method="POST" onsubmit="return validateBusNo()">
-        <label for="bus_no">Bus Number (Format: GJ-18-A-0001):</label>
+        <label for="bus_no">અહીંયા બસ નંબર નાખો  (GJ-18-A-0001):</label>
         <input type="text" name="bus_no" id="bus_no" value="<?= htmlspecialchars($bus['bus_no']) ?>" required>
-        <button type="submit">Update Bus</button>
+        <button type="submit">બસ માહિતી બદલવો </button>
         <p id="error-message" class="alert"></p>
     </form>
 </div>
@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         const value = input.value.trim();
 
         if (!pattern.test(value)) {
-            errorMessage.textContent = "Invalid Bus Number Format. Use GJ-18-A-0001";
+            errorMessage.textContent = "બસ નંબર ફરીવાર નાખો જે રીતે કીધું છે. એ રીતે નાખો  GJ-18-A-0001";
             return false;
         }
 
