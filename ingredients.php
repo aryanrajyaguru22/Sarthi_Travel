@@ -3,7 +3,7 @@ include 'db.php';
 include 'navbar.php';
 session_start();
 
-$all_units = ['Kg', 'Gram', 'Litre', 'ML', 'Piece', 'Packet'];
+$all_units = ['કિલો', 'ગ્રામ', 'લિટર', 'મિલી લિટર', 'નંગ', 'પેકેટ'];
 
 // Handle Add
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $units = $_POST['units'] ?? [];
 
     if (empty($name) || count($units) === 0) {
-        echo "<script>alert('Please enter name and select at least one unit.');</script>";
+        echo "<script>alert('એક વસ્તુ માટે કોઈ એક માપ એકેમ લાહો');</script>";
     } else {
         $conn->query("INSERT INTO ingredients (name) VALUES ('$name')");
         $ingredient_id = $conn->insert_id;
@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $conn->query("INSERT INTO ingredient_units (ingredient_id, unit) VALUES ($ingredient_id, '$unit')");
             }
         }
-        echo "<script>alert('Ingredient added.'); window.location='ingredients.php';</script>";
+        echo "<script>alert('વસ્તુ સામગ્રી સેવ થઇ ગઈ છે '); window.location='ingredients.php';</script>";
     }
 }
 
@@ -37,7 +37,7 @@ if (isset($_GET['delete'])) {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ingredients</title>
+    <title>વસ્તુ સામગ્રી</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -178,30 +178,30 @@ if (isset($_GET['delete'])) {
 <body>
 
 <div class="form-container">
-    <h2>Add New Ingredient</h2>
+    <h2>નવી વસ્તુ સામગ્રી ઉમેરો </h2>
     <form method="POST">
         <label>Name:</label>
         <input type="text" name="name" required>
 
-        <label>Select Units:</label>
+        <label>માપ એકેમ પસંદ કરો:</label>
         <?php foreach ($all_units as $unit): ?>
             <input type="checkbox" name="units[]" value="<?= $unit ?>"> <?= $unit ?><br>
         <?php endforeach; ?>
 
-        <button type="submit">Add Ingredient</button>
+        <button type="submit">નવી વસ્તુ સામગ્રી ઉમેરો </button>
     </form>
 </div>
 
 <hr>
 
-<h3>All Ingredients</h3>
+<h3>વસ્તુ સામગ્રી ના નામ </h3>
 
 <table>
     <tr>
         <th>ID</th>
-        <th>Name</th>
-        <th>Units</th>
-        <th>Action</th>
+        <th>નામ </th>
+        <th>માપ એકેમ</th>
+        <th>વસ્તુ સામગ્રી મેનેજ</th>
     </tr>
     <?php
     $result = $conn->query("SELECT * FROM ingredients ORDER BY id DESC");

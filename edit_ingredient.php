@@ -2,12 +2,12 @@
 include 'db.php';
 session_start();
 
-$all_units = ['Kg', 'Gram', 'Litre', 'ML', 'Piece', 'Packet'];
+$all_units = ['કિલો', 'ગ્રામ', 'લિટર', 'મિલી લિટર', 'નંગ', 'પેકેટ'];
 $id = intval($_GET['id']);
 
 $ingredient = $conn->query("SELECT * FROM ingredients WHERE id=$id")->fetch_assoc();
 if (!$ingredient) {
-    echo "<script>alert('Not found'); window.location='ingredients.php';</script>";
+    echo "<script>alert('તમે જે વસ્તુ માંગો છો એ નથી.'); window.location='ingredients.php';</script>";
     exit;
 }
 
@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $units = $_POST['units'] ?? [];
 
     if (empty($name) || count($units) === 0) {
-        echo "<script>alert('Please provide name and at least one unit');</script>";
+        echo "<script>alert('એક વસ્તુ માટે કોઈ એક માપ એકેમ લાહો');</script>";
     } else {
         $conn->query("UPDATE ingredients SET name='$name' WHERE id=$id");
         $conn->query("DELETE FROM ingredient_units WHERE ingredient_id=$id");
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Ingredient</title>
+    <title>વસ્તુ સામગ્રી માં સુધારો </title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -114,17 +114,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <h2>Edit Ingredient</h2>
 <div class="form-container">
     <form method="POST" onsubmit="return validateForm()">
-        <label for="name">Ingredient Name:</label>
+        <label for="name">વસ્તુ સામગ્રી ના નામ :</label>
         <input type="text" name="name" id="name" value="<?= htmlspecialchars($ingredient['name']) ?>" required>
 
-        <label>Select Units:</label><br>
+        <label>માપ એકેમ પસંદ કરો:</label><br>
         <?php foreach ($all_units as $unit): ?>
             <div class="unit-checkbox">
                 <input type="checkbox" name="units[]" value="<?= $unit ?>" <?= in_array($unit, $existing_units) ? 'checked' : '' ?>> <?= $unit ?>
             </div>
         <?php endforeach; ?>
 
-        <button type="submit">Update Ingredient</button>
+        <button type="submit">વસ્તુ સામગ્રી માં સુધારો કરો </button>
         <p id="error-message" class="alert"></p>
     </form>
 </div>
